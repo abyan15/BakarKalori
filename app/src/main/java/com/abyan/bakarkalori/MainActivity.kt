@@ -5,6 +5,7 @@ import android.os.Bundle
 import com.abyan.bakarkalori.databinding.ActivityMainBinding
 import android.text.Editable
 import android.text.TextWatcher
+import androidx.appcompat.app.AlertDialog
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -99,9 +100,13 @@ class MainActivity : AppCompatActivity() {
             ) {
                 if (response.isSuccessful) {
                     val exerciseList = response.body()
-                    if (exerciseList != null) {
+                    if (exerciseList != null && exerciseList.isNotEmpty() )  {
                         val caloriesPerHour = exerciseList[0].calories_per_hour
+                        val name = exerciseList[0].name
                         binding.hasil.text = "$caloriesPerHour Kalori/Jam"
+                        binding.hasil2.text = "$name"
+                    } else {
+                        showAlertDialog()
                     }
                 } else {
                     binding.hasil.text = "hasil tidak ada"
@@ -113,5 +118,16 @@ class MainActivity : AppCompatActivity() {
                 binding.hasil.text = "KACAU API NYA"
             }
         })
+    }
+    private fun showAlertDialog() {
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.setTitle("Kesalahan")
+        alertDialogBuilder.setMessage("Inputan Bukan Termasuk Olahraga")
+        alertDialogBuilder.setPositiveButton("OK") { dialog, which ->
+            // Tindakan yang akan diambil saat tombol OK ditekan
+            dialog.dismiss() // Menutup dialog
+        }
+        val alertDialog: AlertDialog = alertDialogBuilder.create()
+        alertDialog.show()
     }
 }
